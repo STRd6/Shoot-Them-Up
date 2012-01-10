@@ -20,6 +20,13 @@ Player = (I={}) ->
 
     window.playerSpeed = Math.cos(I.rotation) * amplitude / 6
 
+    if I.age % 30 == 0
+      engine.add
+        class: "Soundblast"
+        x: I.x
+        y: I.y
+        rotation: I.rotation
+
   # We must always return self as the last line
   return self
 
