@@ -7,6 +7,12 @@ engine.add
   x: 250
   y: 150
 
+10.times (i) ->
+  engine.add
+    class: "Enemy"
+    x: 800
+    y: 100 + i * 50
+
 speed = 2
 backgroundOffset = 0
 background = Sprite.loadByName("supernova")
