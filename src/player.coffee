@@ -11,8 +11,11 @@ Player = (I={}) ->
   # Add events and methods here
   self.bind "update", ->
     I.rotation = Point.direction(I, mousePosition)
+    amplitude = Point.distance(I, mousePosition) / 10
 
     I.sprite = Player.animations.swim.wrap((I.age / 6).floor())
+
+    I.y += Math.sin(I.rotation) * amplitude
 
   # We must always return self as the last line
   return self
