@@ -1,0 +1,17 @@
+{
+  "author": "STRd6",
+  "name": "SHuut THem Up",
+  "libs": {
+    "00_gamelib.js": "https://github.com/STRd6/gamelib/raw/pixie/gamelib.js",
+    "browserlib.js": "https://github.com/STRd6/browserlib/raw/pixie/browserlib.js",
+    "extralib.js": "https://github.com/STRd6/extralib/raw/pixie/extralib.js"
+  },
+  "directories": {
+    "lib": "lib",
+    "source": "src",
+    "test": "test"
+  },
+  "width": 960,
+  "height": 640
+}
+
