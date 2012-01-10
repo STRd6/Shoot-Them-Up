@@ -11084,4 +11084,6 @@ $(document).mousemove(function(event) {
 });
 
 engine.start();
+
+Music.play("ambience");
  });
