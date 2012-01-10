@@ -34,3 +34,5 @@ $(document).mousemove (event) ->
 
 engine.start()
 
+Music.play "ambience"
+
