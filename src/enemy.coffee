@@ -5,13 +5,14 @@ Enemy = (I={}) ->
     height: 32
     sprite: "craw"
     width: 32
+    zIndex: 10
 
   # Inherit from game object
   self = GameObject(I)
 
   # Add events and methods here
   self.bind "update", ->
-    I.x -= 1
+    I.x -= playerSpeed
 
   # We must always return self as the last line
   return self
