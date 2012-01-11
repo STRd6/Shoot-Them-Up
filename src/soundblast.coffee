@@ -17,7 +17,7 @@ Soundblast = (I={}) ->
     I.x += Math.cos(I.rotation) * I.speed
     I.y += Math.sin(I.rotation) * I.speed
 
-    engine.find("Enemy").each (enemy) ->
+    engine.find(".waveHits").each (enemy) ->
       if Collision.circular enemy.circle(), self.circle()
         self.destroy()
         enemy.trigger "hit", self
