@@ -5,6 +5,7 @@ Soundblast = (I={}) ->
     sprite: "soundblast"
     speed: 10
     radius: 64
+    zIndex: 9
 
   # Inherit from game object
   self = GameObject(I)
