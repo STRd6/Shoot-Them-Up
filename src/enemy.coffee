@@ -13,7 +13,7 @@ Enemy = (I={}) ->
   self = GameObject(I)
 
   # Add events and methods here
-  self.bind "update", ->
+  self.bind "step", ->
     I.x -= playerSpeed
 
     if I.health >= 2
