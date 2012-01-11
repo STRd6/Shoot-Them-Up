@@ -4,7 +4,7 @@ Enemy = (I={}) ->
     color: "blue"
     health: 2
     height: 32
-    radius: 64
+    radius: 48
     sprite: "craw"
     width: 32
     zIndex: 10
