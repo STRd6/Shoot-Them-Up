@@ -3,6 +3,7 @@ Player = (I={}) ->
   Object.reverseMerge I,
     color: "red"
     height: 32
+    radius: 16
     width: 32
     zIndex: 8
 
