@@ -1,6 +1,8 @@
+canvas = $("canvas").pixieCanvas()
+
 window.engine = Engine
   backgroundColor: false
-  canvas: $("canvas").pixieCanvas()
+  canvas: canvas
 
 engine.add
   class: "Player"
@@ -25,6 +27,8 @@ jup.bind 'update', ->
   jup.I.x -= playerSpeed / 500
   jup.I.y -= playerSpeed / 250
 
+kilometersToJupiter = 300000
+endDistance = 60000
 window.distanceCovered = 0
 window.playerSpeed = 0
 backgroundOffset = 0
@@ -40,7 +44,7 @@ addGhostShipBoss = (->
 engine.bind 'update', ->
   backgroundOffset -= playerSpeed / 8
 
-  if distanceCovered > 18000
+  if distanceCovered > 60000
     addGhostShipBoss()
 
 engine.bind "beforeDraw", (canvas) ->
@@ -48,6 +52,22 @@ engine.bind "beforeDraw", (canvas) ->
 
   background.draw(canvas, backgroundOffset, 0)
   background.draw(canvas, backgroundOffset + background.width, 0)
+
+canvas.font("bold 24px consolas, 'Courier New', 'andale mono', 'lucida console', monospace")
+engine.bind "overlay", (canvas) ->
+  message = "#{(kilometersToJupiter - 5 * distanceCovered).floor()} kilometers to Jupiter"
+
+  canvas.centerText
+    x: 256
+    y: 50
+    text: message
+    color: "#000"
+
+  canvas.centerText
+    x: 254
+    y: 48
+    text: message
+    color: "#FFF"
 
 window.mousePosition = Point(0, 0)
 
