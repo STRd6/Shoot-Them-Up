@@ -4,6 +4,7 @@ Soundblast = (I={}) ->
     color: "blue"
     sprite: "soundblast"
     speed: 10
+    radius: 64
 
   # Inherit from game object
   self = GameObject(I)
@@ -14,6 +15,11 @@ Soundblast = (I={}) ->
 
     I.x += Math.cos(I.rotation) * I.speed
     I.y += Math.sin(I.rotation) * I.speed
+
+    engine.find("Enemy").each (enemy) ->
+      if Collision.circular enemy, self
+        self.destroy()
+        enemy.trigger "hit", self
 
     if I.x < 0 || I.x > App.width || I.y < 0 || I.y > App.height
       self.destroy()
