@@ -8,6 +8,7 @@ Enemy = (I={}) ->
     sprite: "craw"
     width: 32
     zIndex: 10
+    waveHits: true
 
   # Inherit from game object
   self = GameObject(I)
