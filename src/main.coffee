@@ -44,7 +44,7 @@ addGhostShipBoss = (->
 engine.bind 'update', ->
   backgroundOffset -= playerSpeed / 8
 
-  if distanceCovered > 60000
+  if distanceCovered > 38000
     addGhostShipBoss()
 
 engine.bind "beforeDraw", (canvas) ->
