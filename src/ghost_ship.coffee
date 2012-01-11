@@ -6,7 +6,7 @@ GhostShip = (I={}) ->
     sprite: "ghost_ship"
     width: 32
     radius: 160
-    health: 15
+    health: 60
     velocity: Point(-2, 0)
 
   # Inherit from game object
@@ -21,6 +21,9 @@ GhostShip = (I={}) ->
       I.velocity.x = -4
 
     I.x += I.velocity.x
+
+  self.bind "hit", ->
+    engine.flash()
 
   # We must always return self as the last line
   return self
