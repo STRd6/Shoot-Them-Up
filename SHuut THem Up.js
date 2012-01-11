@@ -10993,6 +10993,82 @@ Framerate = function(options) {
 ;
 ;
 ;
+var Enemy;
+
+Enemy = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    color: "blue",
+    health: 2,
+    height: 32,
+    radius: 48,
+    sprite: "craw",
+    width: 32,
+    zIndex: 10,
+    waveHits: true
+  });
+  self = GameObject(I);
+  self.bind("step", function() {
+    I.x -= playerSpeed;
+    if (I.health >= 2) {
+      return I.sprite = Enemy.sprites.craw;
+    } else {
+      return I.sprite = Enemy.sprites.crawRed;
+    }
+  });
+  self.bind("hit", function() {
+    I.health -= 1;
+    if (I.health <= 0) return self.destroy();
+  });
+  self.bind("destroy", function() {
+    return engine.add({
+      sprite: "bubbles",
+      duration: 15,
+      x: I.x,
+      y: I.y,
+      zIndex: 15
+    });
+  });
+  return self;
+};
+
+Enemy.sprites = {
+  craw: Sprite.loadByName("craw"),
+  crawRed: Sprite.loadByName("craw_red")
+};
+;
+var GhostShip;
+
+GhostShip = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    color: "blue",
+    height: 32,
+    sprite: "ghost_ship",
+    width: 32,
+    radius: 160,
+    health: 60,
+    velocity: Point(-2, 0)
+  });
+  self = Enemy(I);
+  self.unbind("step");
+  self.bind("step", function() {
+    if (I.x < 700) {
+      I.velocity.x = 2;
+    } else if (I.x > App.width) {
+      I.velocity.x = -4;
+    }
+    return I.x += I.velocity.x;
+  });
+  self.bind("hit", function() {
+    engine.flash();
+    return Sound.play("boss_hit");
+  });
+  return self;
+};
+;
 var Player;
 
 Player = function(I) {
@@ -11001,7 +11077,9 @@ Player = function(I) {
   Object.reverseMerge(I, {
     color: "red",
     height: 32,
-    width: 32
+    radius: 16,
+    width: 32,
+    zIndex: 8
   });
   self = GameObject(I);
   self.bind("update", function() {
@@ -11009,7 +11087,17 @@ Player = function(I) {
     I.rotation = Point.direction(I, mousePosition);
     amplitude = Point.distance(I, mousePosition) / 10;
     I.sprite = Player.animations.swim.wrap((I.age / 6).floor());
-    return I.y += Math.sin(I.rotation) * amplitude;
+    I.y += Math.sin(I.rotation) * amplitude;
+    window.playerSpeed = Math.cos(I.rotation) * amplitude / 6;
+    window.distanceCovered += window.playerSpeed;
+    if (I.age % 30 === 0) {
+      return engine.add({
+        "class": "Soundblast",
+        x: I.x,
+        y: I.y,
+        rotation: I.rotation
+      });
+    }
   });
   return self;
 };
@@ -11018,32 +11106,64 @@ Player.animations = {
   swim: Sprite.loadSheet("swim", 256, 157)
 };
 ;
-var Enemy;
+var Soundblast;
 
-Enemy = function(I) {
+Soundblast = function(I) {
   var self;
   if (I == null) I = {};
   Object.reverseMerge(I, {
     color: "blue",
-    height: 32,
-    sprite: "craw",
-    width: 32
+    sprite: "soundblast",
+    speed: 10,
+    radius: 64,
+    zIndex: 9
   });
   self = GameObject(I);
   self.bind("update", function() {
-    return I.x -= 1;
+    I.sprite = Soundblast.animation.wrap((I.age / 6).floor());
+    I.x += Math.cos(I.rotation) * I.speed;
+    I.y += Math.sin(I.rotation) * I.speed;
+    engine.find(".waveHits").each(function(enemy) {
+      if (Collision.circular(enemy.circle(), self.circle())) {
+        self.destroy();
+        return enemy.trigger("hit", self);
+      }
+    });
+    if (I.x < 0 || I.x > App.width || I.y < 0 || I.y > App.height) {
+      return self.destroy();
+    }
   });
   return self;
+};
+
+Soundblast.animation = Sprite.loadSheet("soundblast", 128, 95);
+;
+
+Function.prototype.once = function() {
+  var fn, memo, ran;
+  fn = this;
+  ran = false;
+  memo = null;
+  return function() {
+    if (ran) {
+      return memo;
+    } else {
+      ran = true;
+      return memo = fn.apply(this, arguments);
+    }
+  };
 };
 ;
 
 App.entities = {};
 ;
-;$(function(){ var background, backgroundOffset, speed;
+;$(function(){ var DEBUG_DRAW, addGhostShipBoss, background, backgroundOffset, canvas, endDistance, jup, kilometersToJupiter;
+
+canvas = $("canvas").pixieCanvas();
 
 window.engine = Engine({
   backgroundColor: false,
-  canvas: $("canvas").pixieCanvas()
+  canvas: canvas
 });
 
 engine.add({
@@ -11060,20 +11180,68 @@ engine.add({
   });
 });
 
-speed = 2;
+jup = engine.add({
+  sprite: "jupiter",
+  x: 800,
+  y: App.height / 2,
+  zIndex: 5,
+  scale: 0.1
+});
+
+jup.bind('update', function() {
+  jup.I.scale += playerSpeed / 25000;
+  jup.I.x -= playerSpeed / 500;
+  return jup.I.y -= playerSpeed / 250;
+});
+
+kilometersToJupiter = 300000;
+
+endDistance = 60000;
+
+window.distanceCovered = 0;
+
+window.playerSpeed = 0;
 
 backgroundOffset = 0;
 
 background = Sprite.loadByName("supernova");
 
+addGhostShipBoss = (function() {
+  return engine.add({
+    "class": "GhostShip",
+    x: App.width + 320,
+    y: App.height / 2
+  });
+}).once();
+
 engine.bind('update', function() {
-  return backgroundOffset -= speed;
+  backgroundOffset -= playerSpeed / 8;
+  if (distanceCovered > 38000) return addGhostShipBoss();
 });
 
 engine.bind("beforeDraw", function(canvas) {
   if (backgroundOffset < -background.width) backgroundOffset += background.width;
   background.draw(canvas, backgroundOffset, 0);
   return background.draw(canvas, backgroundOffset + background.width, 0);
+});
+
+canvas.font("bold 24px consolas, 'Courier New', 'andale mono', 'lucida console', monospace");
+
+engine.bind("overlay", function(canvas) {
+  var message;
+  message = "" + ((kilometersToJupiter - 5 * distanceCovered).floor()) + " kilometers to Jupiter";
+  canvas.centerText({
+    x: 256,
+    y: 50,
+    text: message,
+    color: "#000"
+  });
+  return canvas.centerText({
+    x: 254,
+    y: 48,
+    text: message,
+    color: "#FFF"
+  });
 });
 
 window.mousePosition = Point(0, 0);
@@ -11086,4 +11254,21 @@ $(document).mousemove(function(event) {
 engine.start();
 
 Music.play("ambience");
+
+DEBUG_DRAW = false;
+
+$(document).bind("keydown", "0", function() {
+  return DEBUG_DRAW = !DEBUG_DRAW;
+});
+
+engine.bind("draw", function(canvas) {
+  if (DEBUG_DRAW) {
+    return engine.find("Soundblast, Enemy, Player").each(function(object) {
+      return canvas.drawCircle({
+        circle: object.circle(),
+        color: "rgba(255, 0, 255, 0.5)"
+      });
+    });
+  }
+});
  });
