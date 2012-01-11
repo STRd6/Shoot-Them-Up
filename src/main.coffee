@@ -6,8 +6,6 @@ window.engine = Engine
 
 engine.add
   class: "Player"
-  x: 250
-  y: 150
 
 10.times (i) ->
   engine.add
