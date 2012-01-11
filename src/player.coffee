@@ -20,6 +20,7 @@ Player = (I={}) ->
     I.y += Math.sin(I.rotation) * amplitude
 
     window.playerSpeed = Math.cos(I.rotation) * amplitude / 6
+    window.distanceCovered += window.playerSpeed
 
     if I.age % 30 == 0
       engine.add
