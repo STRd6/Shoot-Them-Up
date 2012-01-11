@@ -5,6 +5,8 @@ Player = (I={}) ->
     height: 32
     radius: 16
     width: 32
+    x: 250
+    y: App.height / 2
     zIndex: 8
 
   # Inherit from game object
