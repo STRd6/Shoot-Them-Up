@@ -16,17 +16,8 @@ MainGame = (I={}) ->
         x: 800
         y: 100 + i * 50
 
-    jup = self.add
-      sprite: "jupiter"
-      x: 800
-      y: App.height/2
-      zIndex: 5
-      scale: 0.1
-
-    jup.bind 'update', ->
-      jup.I.scale += playerSpeed / 25000
-      jup.I.x -= playerSpeed / 500
-      jup.I.y -= playerSpeed / 250
+    self.add
+      class: "Jupiter"
 
     kilometersToJupiter = 300000
     endDistance = 60000
