@@ -11063,7 +11063,8 @@ GhostShip = function(I) {
     return I.x += I.velocity.x;
   });
   self.bind("hit", function() {
-    return engine.flash();
+    engine.flash();
+    return Sound.play("boss_hit");
   });
   return self;
 };
