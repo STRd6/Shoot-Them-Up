@@ -50,7 +50,7 @@ Music.play "ambience"
 
 DEBUG_DRAW = false
 $(document).bind "keydown", "0", ->
-  DEBUG_DRAW = true
+  DEBUG_DRAW = !DEBUG_DRAW
 
 engine.bind "draw", (canvas) ->
   if DEBUG_DRAW
