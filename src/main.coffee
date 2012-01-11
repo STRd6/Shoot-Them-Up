@@ -30,14 +30,18 @@ window.playerSpeed = 0
 backgroundOffset = 0
 background = Sprite.loadByName("supernova")
 
+addGhostShipBoss = (->
+  engine.add
+      class: "GhostShip"
+      x: App.width + 320
+      y: App.height / 2
+).once()
+
 engine.bind 'update', ->
   backgroundOffset -= playerSpeed / 8
 
-  if distanceCovered > 9000
-    engine.add
-      class: "GhostShip"
-      x: 800
-      y: App.height / 2
+  if distanceCovered > 18000
+    addGhostShipBoss()
 
 engine.bind "beforeDraw", (canvas) ->
   backgroundOffset += background.width if backgroundOffset < -background.width
