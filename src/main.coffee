@@ -38,12 +38,6 @@ engine.bind "beforeDraw", (canvas) ->
   background.draw(canvas, backgroundOffset, 0)
   background.draw(canvas, backgroundOffset + background.width, 0)
 
-engine.bind "draw", (canvas) ->
-  engine.find("Soundblast, Enemy").each (object) ->
-    canvas.drawCircle
-      circle: object.circle()
-      color: "rgba(255, 0, 255, 0.5)"
-
 window.mousePosition = Point(0, 0)
 
 $(document).mousemove (event) ->
@@ -58,3 +52,9 @@ DEBUG_DRAW = false
 $(document).bind "keydown", "0", ->
   DEBUG_DRAW = true
 
+engine.bind "draw", (canvas) ->
+  if DEBUG_DRAW
+    engine.find("Soundblast, Enemy, Player").each (object) ->
+      canvas.drawCircle
+        circle: object.circle()
+        color: "rgba(255, 0, 255, 0.5)"
