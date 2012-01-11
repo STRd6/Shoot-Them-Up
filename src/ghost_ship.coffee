@@ -24,7 +24,6 @@ GhostShip = (I={}) ->
 
   self.bind "hit", ->
     engine.flash()
-    Sound.play "boss_hit"
 
   # We must always return self as the last line
   return self
