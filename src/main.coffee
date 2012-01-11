@@ -25,12 +25,19 @@ jup.bind 'update', ->
   jup.I.x -= playerSpeed / 500
   jup.I.y -= playerSpeed / 250
 
+window.distanceCovered = 0
 window.playerSpeed = 0
 backgroundOffset = 0
 background = Sprite.loadByName("supernova")
 
 engine.bind 'update', ->
   backgroundOffset -= playerSpeed / 8
+
+  if distanceCovered > 9000
+    engine.add
+      class: "GhostShip"
+      x: 800
+      y: App.height / 2
 
 engine.bind "beforeDraw", (canvas) ->
   backgroundOffset += background.width if backgroundOffset < -background.width
