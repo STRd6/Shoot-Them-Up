@@ -8,6 +8,8 @@ GhostShip = (I={}) ->
     radius: 160
     health: 60
     velocity: Point(-2, 0)
+    x: App.width + 320
+    y: App.height / 2
 
   # Inherit from game object
   self = Enemy(I)
