@@ -64,6 +64,11 @@ MainGame = (I={}) ->
         x: 14500 + 50 * i
         y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
 
+    I.spawnEvents.push
+      class: "GhostShip"
+      x: 3800
+      y: App.height / 2
+
     I.spawnEvents.sort (a, b) ->
       a.x - b.x
 
@@ -81,23 +86,22 @@ MainGame = (I={}) ->
     backgroundOffset = 0
     background = Sprite.loadByName("supernova")
 
-    addGhostShipBoss = (->
-      self.add
-        class: "GhostShip"
-    ).once()
-
     processSpawnEvent = (event) ->
       engine.add
         class: event.class
         x: event.x - (spawnLine - SPAWN_BUFFER) # x is adjusted based on current spawn line
         y: event.y
 
+    triggerEnd = (->
+      self.cameras().first().fadeOut()
+
+      engine.delay 30, ->
+        engine.setState MainGame()
+    ).once()
+
     self.bind 'update', ->
       #TODO Background layers
       backgroundOffset -= playerSpeed / 8
-
-      if distanceCovered > 38000
-        addGhostShipBoss()
 
       if (newSpawnLine = distanceCovered + SPAWN_BUFFER) > spawnLine
         spawnLine = newSpawnLine
@@ -107,6 +111,9 @@ MainGame = (I={}) ->
         processSpawnEvent(nextEvent)
         eventIndex += 1
 
+      if distanceCovered >= endDistance
+        triggerEnd()
+
     self.bind "beforeDraw", (canvas) ->
       backgroundOffset += background.width if backgroundOffset < -background.width
 
@@ -114,7 +121,7 @@ MainGame = (I={}) ->
       background.draw(canvas, backgroundOffset + background.width, 0)
 
     self.bind "overlay", (canvas) ->
-      message = "#{(kilometersToJupiter - 5 * distanceCovered).floor()} kilometers to Jupiter"
+      message = "#{Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)} kilometers to Jupiter"
 
       canvas.centerText
         x: 256
