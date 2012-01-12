@@ -66,7 +66,7 @@ MainGame = (I={}) ->
 
     I.spawnEvents.push
       class: "GhostShip"
-      x: 3800
+      x: 38000
       y: App.height / 2
 
     I.spawnEvents.sort (a, b) ->
@@ -96,6 +96,7 @@ MainGame = (I={}) ->
       self.cameras().first().fadeOut()
 
       engine.delay 30, ->
+        # TODO: Load Level 2
         engine.setState MainGame()
     ).once()
 
