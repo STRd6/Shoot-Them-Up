@@ -1,8 +1,7 @@
 MainGame = (I={}) ->
   Object.reverseMerge I,
-    level: "1"
+    level: 1
     music: "ambience"
-    background: "supernova"
 
   # Inherit from game object
   self = GameState(I)
@@ -13,7 +12,8 @@ MainGame = (I={}) ->
     self.add
       class: "Player"
 
-    I.spawnEvents = MainGame.eventData[I.level]
+    level = MainGame.levelData[I.level]
+    I.spawnEvents = level.eventData
 
     I.spawnEvents.sort (a, b) ->
       a.x - b.x
@@ -27,7 +27,7 @@ MainGame = (I={}) ->
     eventIndex = 0
 
     backgroundOffset = 0
-    background = Sprite.loadByName(I.background)
+    background = Sprite.loadByName(level.background)
 
     processSpawnEvent = (event) ->
       engine.add
@@ -40,14 +40,13 @@ MainGame = (I={}) ->
 
       engine.delay 30, ->
         engine.setState MainGame(
-          level: 2
-          background: "clouds"
+          level: I.level + 1
         )
     ).once()
 
     self.bind 'update', ->
       #TODO Background layers
-      backgroundOffset -= playerSpeed / 8
+      backgroundOffset -= playerSpeed * level.parallax
 
       if (newSpawnLine = distanceCovered + SPAWN_BUFFER) > spawnLine
         spawnLine = newSpawnLine
@@ -67,7 +66,7 @@ MainGame = (I={}) ->
       background.draw(canvas, backgroundOffset + background.width, 0)
 
     self.bind "overlay", (canvas) ->
-      message = "#{Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)} kilometers to Jupiter"
+      message = "#{Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)} kilometers to #{level.objective}"
 
       canvas.centerText
         x: 256
@@ -86,12 +85,18 @@ MainGame = (I={}) ->
   # We must always return self as the last line
   return self
 
-MainGame.eventData =
-  1: []
-  2: []
+MainGame.levelData =
+  1:
+    background: "supernova"
+    parallax: 1/8
+    objective: "Jupiter"
+  2:
+    background: "clouds"
+    parallax: 1/2
+    objective: "The Tower"
 
 (->
-  level1 = MainGame.eventData[1]
+  level1 = MainGame.levelData[1].eventData = []
 
   27.times (i) ->
     level1.push
@@ -155,7 +160,7 @@ MainGame.eventData =
     y: App.height / 2
 
   # Level 2
-  level2 = MainGame.eventData[2]
+  level2 = MainGame.levelData[2].eventData = []
 
   100.times (i) ->
     level2.push
