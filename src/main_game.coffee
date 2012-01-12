@@ -2,19 +2,70 @@ MainGame = (I={}) ->
   Object.reverseMerge I,
     level: "level1"
     music: "ambience"
+    spawnEvents: []
 
   # Inherit from game object
   self = GameState(I)
+
+  SPAWN_BUFFER = 400 + App.width
 
   self.bind "enter", ->
     self.add
       class: "Player"
 
-    10.times (i) ->
-      self.add
+    27.times (i) ->
+      I.spawnEvents.push
         class: "Enemy"
-        x: 800
+        x: 900 + 1000 * i
+        y: App.height / 2
+
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 1400 + 1000 * i
+        y: App.height / 4
+
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 2100 + 1300 * i
+        y: 3 * App.height / 4
+
+    8.times (i) ->
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 1000 + 500 * i
         y: 100 + i * 50
+
+    10.times (i) ->
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 5000 + 250 * i
+        y: 50 + App.height/2 * i / 13
+
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 5000 + 250 * i
+        y: App.height - 50 - App.height/2 * i / 13
+
+    50.times (i) ->
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 7500 + 100 * i
+        y: App.height / 2 + Math.sin(i * Math.TAU / 20) * App.height / 2
+
+    20.times (i) ->
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 12500 + 100 * i
+        y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
+
+    20.times (i) ->
+      I.spawnEvents.push
+        class: "Enemy"
+        x: 14500 + 50 * i
+        y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
+
+    I.spawnEvents.sort (a, b) ->
+      a.x - b.x
 
     self.add
       class: "Jupiter"
@@ -23,19 +74,38 @@ MainGame = (I={}) ->
     endDistance = 60000
     window.distanceCovered = 0
     window.playerSpeed = 0
+
+    spawnLine = 0
+    eventIndex = 0
+
     backgroundOffset = 0
     background = Sprite.loadByName("supernova")
 
     addGhostShipBoss = (->
       self.add
-          class: "GhostShip"
+        class: "GhostShip"
     ).once()
 
+    processSpawnEvent = (event) ->
+      engine.add
+        class: event.class
+        x: event.x - (spawnLine - SPAWN_BUFFER) # x is adjusted based on current spawn line
+        y: event.y
+
     self.bind 'update', ->
+      #TODO Background layers
       backgroundOffset -= playerSpeed / 8
 
       if distanceCovered > 38000
         addGhostShipBoss()
+
+      if (newSpawnLine = distanceCovered + SPAWN_BUFFER) > spawnLine
+        spawnLine = newSpawnLine
+
+      # Spawn distance related objects and events
+      while (nextEvent = I.spawnEvents[eventIndex]) and nextEvent.x < spawnLine
+        processSpawnEvent(nextEvent)
+        eventIndex += 1
 
     self.bind "beforeDraw", (canvas) ->
       backgroundOffset += background.width if backgroundOffset < -background.width
