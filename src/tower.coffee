@@ -15,7 +15,7 @@ Tower = (I={}) ->
   # Add events and methods here
   self.bind "update", ->
     I.scale += playerSpeed / 15000
-    I.x -= playerSpeed / 100
+    I.x -= playerSpeed / 150
     I.y += playerSpeed / 100
 
   # We must always return self as the last line
