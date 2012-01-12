@@ -18,7 +18,6 @@ MainGame = (I={}) ->
     I.spawnEvents.sort (a, b) ->
       a.x - b.x
 
-    kilometersToJupiter = 300000
     endDistance = 60000
     window.distanceCovered = 0
     window.playerSpeed = 0
@@ -66,7 +65,7 @@ MainGame = (I={}) ->
       background.draw(canvas, backgroundOffset + background.width, 0)
 
     self.bind "overlay", (canvas) ->
-      message = "#{Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)} kilometers to #{level.objective}"
+      message = "#{Math.max((level.objectiveDistance - (level.distanceScale || 1) * distanceCovered).floor(), 0)} #{level.units || "kilometers"} to #{level.objective}"
 
       canvas.centerText
         x: 256
@@ -90,10 +89,14 @@ MainGame.levelData =
     background: "supernova"
     parallax: 1/8
     objective: "Jupiter"
+    objectiveDistance: 300000
+    distanceScale: 5
   2:
     background: "clouds"
     parallax: 1/2
     objective: "The Tower"
+    objectiveDistance: 60000
+    units: "meters"
 
 (->
   level1 = MainGame.levelData[1].eventData = []
@@ -161,6 +164,11 @@ MainGame.levelData =
 
   # Level 2
   level2 = MainGame.levelData[2].eventData = []
+
+  level2.push
+    class: "Tower"
+    y: App.height
+    x: 24000
 
   100.times (i) ->
     level2.push
