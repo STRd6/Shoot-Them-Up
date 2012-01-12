@@ -24,7 +24,7 @@ engine.bind "draw", (canvas) ->
         color: "rgba(255, 0, 255, 0.5)"
 
 engine.setState MainGame(
-  level: 1
+  level: 2
   background: "clouds"
 )
 
