@@ -22,6 +22,9 @@ Enemy = (I={}) ->
     else
      I.sprite = Enemy.sprites.crawRed
 
+   if I.x < -400
+     I.active = false
+
   self.bind "hit", ->
     I.health -= 1
 
