@@ -11072,6 +11072,204 @@ GhostShip = function(I) {
   return self;
 };
 ;
+var Jupiter;
+
+Jupiter = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    sprite: "jupiter",
+    x: 800,
+    y: App.height / 2,
+    zIndex: 5,
+    scale: 0.1
+  });
+  self = GameObject(I);
+  self.bind("update", function() {
+    I.scale += playerSpeed / 25000;
+    I.x -= playerSpeed / 500;
+    return I.y -= playerSpeed / 250;
+  });
+  return self;
+};
+;
+var MainGame;
+
+MainGame = function(I) {
+  var SPAWN_BUFFER, self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    level: 1,
+    music: "ambience"
+  });
+  self = GameState(I);
+  SPAWN_BUFFER = 400 + App.width;
+  self.bind("enter", function() {
+    var background, backgroundOffset, endDistance, eventIndex, kilometersToJupiter, level, processSpawnEvent, spawnLine, triggerEnd;
+    self.add({
+      "class": "Player"
+    });
+    level = MainGame.levelData[I.level];
+    I.spawnEvents = level.eventData;
+    I.spawnEvents.sort(function(a, b) {
+      return a.x - b.x;
+    });
+    kilometersToJupiter = 300000;
+    endDistance = 60000;
+    window.distanceCovered = 0;
+    window.playerSpeed = 0;
+    spawnLine = 0;
+    eventIndex = 0;
+    backgroundOffset = 0;
+    background = Sprite.loadByName(level.background);
+    processSpawnEvent = function(event) {
+      return engine.add({
+        "class": event["class"],
+        x: event.x - (spawnLine - SPAWN_BUFFER),
+        y: event.y
+      });
+    };
+    triggerEnd = (function() {
+      self.cameras().first().fadeOut();
+      return engine.delay(30, function() {
+        return engine.setState(MainGame({
+          level: I.level + 1
+        }));
+      });
+    }).once();
+    self.bind('update', function() {
+      var newSpawnLine, nextEvent;
+      backgroundOffset -= playerSpeed * level.parallax;
+      if ((newSpawnLine = distanceCovered + SPAWN_BUFFER) > spawnLine) {
+        spawnLine = newSpawnLine;
+      }
+      while ((nextEvent = I.spawnEvents[eventIndex]) && nextEvent.x < spawnLine) {
+        processSpawnEvent(nextEvent);
+        eventIndex += 1;
+      }
+      if (distanceCovered >= endDistance) return triggerEnd();
+    });
+    self.bind("beforeDraw", function(canvas) {
+      if (backgroundOffset < -background.width) {
+        backgroundOffset += background.width;
+      }
+      background.draw(canvas, backgroundOffset, 0);
+      return background.draw(canvas, backgroundOffset + background.width, 0);
+    });
+    self.bind("overlay", function(canvas) {
+      var message;
+      message = "" + (Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)) + " kilometers to " + level.objective;
+      canvas.centerText({
+        x: 256,
+        y: 50,
+        text: message,
+        color: "#000"
+      });
+      return canvas.centerText({
+        x: 254,
+        y: 48,
+        text: message,
+        color: "#FFF"
+      });
+    });
+    return Music.play(I.music);
+  });
+  return self;
+};
+
+MainGame.levelData = {
+  1: {
+    background: "supernova",
+    parallax: 1 / 8,
+    objective: "Jupiter"
+  },
+  2: {
+    background: "clouds",
+    parallax: 1 / 2,
+    objective: "The Tower"
+  }
+};
+
+(function() {
+  var level1, level2;
+  level1 = MainGame.levelData[1].eventData = [];
+  27..times(function(i) {
+    level1.push({
+      "class": "Enemy",
+      x: 900 + 1000 * i,
+      y: App.height / 2
+    });
+    level1.push({
+      "class": "Enemy",
+      x: 1400 + 1000 * i,
+      y: App.height / 4
+    });
+    return level1.push({
+      "class": "Enemy",
+      x: 2100 + 1300 * i,
+      y: 3 * App.height / 4
+    });
+  });
+  8..times(function(i) {
+    return level1.push({
+      "class": "Enemy",
+      x: 1000 + 500 * i,
+      y: 100 + i * 50
+    });
+  });
+  10..times(function(i) {
+    level1.push({
+      "class": "Enemy",
+      x: 5000 + 250 * i,
+      y: 50 + App.height / 2 * i / 13
+    });
+    return level1.push({
+      "class": "Enemy",
+      x: 5000 + 250 * i,
+      y: App.height - 50 - App.height / 2 * i / 13
+    });
+  });
+  50..times(function(i) {
+    return level1.push({
+      "class": "Enemy",
+      x: 7500 + 100 * i,
+      y: App.height / 2 + Math.sin(i * Math.TAU / 20) * App.height / 2
+    });
+  });
+  20..times(function(i) {
+    return level1.push({
+      "class": "Enemy",
+      x: 12500 + 100 * i,
+      y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
+    });
+  });
+  20..times(function(i) {
+    return level1.push({
+      "class": "Enemy",
+      x: 14500 + 50 * i,
+      y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
+    });
+  });
+  level1.push({
+    "class": "Jupiter",
+    x: 800,
+    y: App.height / 2
+  });
+  level1.push({
+    "class": "GhostShip",
+    x: 38000,
+    y: App.height / 2
+  });
+  level2 = MainGame.levelData[2].eventData = [];
+  return 100..times(function(i) {
+    return level2.push({
+      "class": "Gull",
+      x: i * 250,
+      y: rand(App.height)
+    });
+  });
+})();
+;
 var Player;
 
 Player = function(I) {
@@ -11159,172 +11357,25 @@ Function.prototype.once = function() {
   };
 };
 ;
-var MainGame;
+var Gull;
 
-MainGame = function(I) {
-  var SPAWN_BUFFER, self;
-  if (I == null) I = {};
-  Object.reverseMerge(I, {
-    level: "level1",
-    music: "ambience",
-    spawnEvents: []
-  });
-  self = GameState(I);
-  SPAWN_BUFFER = 400 + App.width;
-  self.bind("enter", function() {
-    var background, backgroundOffset, endDistance, eventIndex, kilometersToJupiter, processSpawnEvent, spawnLine, triggerEnd;
-    self.add({
-      "class": "Player"
-    });
-    27..times(function(i) {
-      I.spawnEvents.push({
-        "class": "Enemy",
-        x: 900 + 1000 * i,
-        y: App.height / 2
-      });
-      I.spawnEvents.push({
-        "class": "Enemy",
-        x: 1400 + 1000 * i,
-        y: App.height / 4
-      });
-      return I.spawnEvents.push({
-        "class": "Enemy",
-        x: 2100 + 1300 * i,
-        y: 3 * App.height / 4
-      });
-    });
-    8..times(function(i) {
-      return I.spawnEvents.push({
-        "class": "Enemy",
-        x: 1000 + 500 * i,
-        y: 100 + i * 50
-      });
-    });
-    10..times(function(i) {
-      I.spawnEvents.push({
-        "class": "Enemy",
-        x: 5000 + 250 * i,
-        y: 50 + App.height / 2 * i / 13
-      });
-      return I.spawnEvents.push({
-        "class": "Enemy",
-        x: 5000 + 250 * i,
-        y: App.height - 50 - App.height / 2 * i / 13
-      });
-    });
-    50..times(function(i) {
-      return I.spawnEvents.push({
-        "class": "Enemy",
-        x: 7500 + 100 * i,
-        y: App.height / 2 + Math.sin(i * Math.TAU / 20) * App.height / 2
-      });
-    });
-    20..times(function(i) {
-      return I.spawnEvents.push({
-        "class": "Enemy",
-        x: 12500 + 100 * i,
-        y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
-      });
-    });
-    20..times(function(i) {
-      return I.spawnEvents.push({
-        "class": "Enemy",
-        x: 14500 + 50 * i,
-        y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
-      });
-    });
-    I.spawnEvents.push({
-      "class": "GhostShip",
-      x: 38000,
-      y: App.height / 2
-    });
-    I.spawnEvents.sort(function(a, b) {
-      return a.x - b.x;
-    });
-    self.add({
-      "class": "Jupiter"
-    });
-    kilometersToJupiter = 300000;
-    endDistance = 60000;
-    window.distanceCovered = 0;
-    window.playerSpeed = 0;
-    spawnLine = 0;
-    eventIndex = 0;
-    backgroundOffset = 0;
-    background = Sprite.loadByName("supernova");
-    processSpawnEvent = function(event) {
-      return engine.add({
-        "class": event["class"],
-        x: event.x - (spawnLine - SPAWN_BUFFER),
-        y: event.y
-      });
-    };
-    triggerEnd = (function() {
-      self.cameras().first().fadeOut();
-      return engine.delay(30, function() {
-        return engine.setState(MainGame());
-      });
-    }).once();
-    self.bind('update', function() {
-      var newSpawnLine, nextEvent;
-      backgroundOffset -= playerSpeed / 8;
-      if ((newSpawnLine = distanceCovered + SPAWN_BUFFER) > spawnLine) {
-        spawnLine = newSpawnLine;
-      }
-      while ((nextEvent = I.spawnEvents[eventIndex]) && nextEvent.x < spawnLine) {
-        processSpawnEvent(nextEvent);
-        eventIndex += 1;
-      }
-      if (distanceCovered >= endDistance) return triggerEnd();
-    });
-    self.bind("beforeDraw", function(canvas) {
-      if (backgroundOffset < -background.width) {
-        backgroundOffset += background.width;
-      }
-      background.draw(canvas, backgroundOffset, 0);
-      return background.draw(canvas, backgroundOffset + background.width, 0);
-    });
-    self.bind("overlay", function(canvas) {
-      var message;
-      message = "" + (Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)) + " kilometers to Jupiter";
-      canvas.centerText({
-        x: 256,
-        y: 50,
-        text: message,
-        color: "#000"
-      });
-      return canvas.centerText({
-        x: 254,
-        y: 48,
-        text: message,
-        color: "#FFF"
-      });
-    });
-    return Music.play(I.music);
-  });
-  return self;
-};
-;
-var Jupiter;
-
-Jupiter = function(I) {
+Gull = function(I) {
   var self;
   if (I == null) I = {};
   Object.reverseMerge(I, {
-    sprite: "jupiter",
-    x: 800,
-    y: App.height / 2,
-    zIndex: 5,
-    scale: 0.1
+    radius: 64
   });
-  self = GameObject(I);
+  self = Enemy(I);
   self.bind("update", function() {
-    I.scale += playerSpeed / 25000;
-    I.x -= playerSpeed / 500;
-    return I.y -= playerSpeed / 250;
+    I.sprite = Gull.animation.wrap((I.age / 6).floor());
+    I.x -= 4;
+    I.y += Math.cos(I.age * Math.TAU / 60) * 20;
+    return I.hflip = true;
   });
   return self;
 };
+
+Gull.animation = Sprite.loadSheet("gull", 256, 234);
 ;
 
 App.entities = {};
@@ -11364,7 +11415,10 @@ engine.bind("draw", function(canvas) {
   }
 });
 
-engine.setState(MainGame());
+engine.setState(MainGame({
+  level: 1,
+  background: "clouds"
+}));
 
 engine.start();
  });
