@@ -23,6 +23,9 @@ engine.bind "draw", (canvas) ->
         circle: object.circle()
         color: "rgba(255, 0, 255, 0.5)"
 
-engine.setState MainGame()
+engine.setState MainGame(
+  level: 2
+  background: "clouds"
+)
 
 engine.start()
