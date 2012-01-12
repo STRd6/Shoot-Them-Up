@@ -11105,7 +11105,7 @@ MainGame = function(I) {
   self = GameState(I);
   SPAWN_BUFFER = 400 + App.width;
   self.bind("enter", function() {
-    var background, backgroundOffset, endDistance, eventIndex, kilometersToJupiter, level, processSpawnEvent, spawnLine, triggerEnd;
+    var background, backgroundOffset, endDistance, eventIndex, level, processSpawnEvent, spawnLine, triggerEnd;
     self.add({
       "class": "Player"
     });
@@ -11114,7 +11114,6 @@ MainGame = function(I) {
     I.spawnEvents.sort(function(a, b) {
       return a.x - b.x;
     });
-    kilometersToJupiter = 300000;
     endDistance = 60000;
     window.distanceCovered = 0;
     window.playerSpeed = 0;
@@ -11158,7 +11157,7 @@ MainGame = function(I) {
     });
     self.bind("overlay", function(canvas) {
       var message;
-      message = "" + (Math.max((kilometersToJupiter - 5 * distanceCovered).floor(), 0)) + " kilometers to " + level.objective;
+      message = "" + (Math.max((level.objectiveDistance - (level.distanceScale || 1) * distanceCovered).floor(), 0)) + " " + (level.units || "kilometers") + " to " + level.objective;
       canvas.centerText({
         x: 256,
         y: 50,
@@ -11181,12 +11180,16 @@ MainGame.levelData = {
   1: {
     background: "supernova",
     parallax: 1 / 8,
-    objective: "Jupiter"
+    objective: "Jupiter",
+    objectiveDistance: 300000,
+    distanceScale: 5
   },
   2: {
     background: "clouds",
     parallax: 1 / 2,
-    objective: "The Tower"
+    objective: "The Tower",
+    objectiveDistance: 60000,
+    units: "meters"
   }
 };
 
@@ -11261,6 +11264,11 @@ MainGame.levelData = {
     y: App.height / 2
   });
   level2 = MainGame.levelData[2].eventData = [];
+  level2.push({
+    "class": "Tower",
+    y: App.height,
+    x: 24000
+  });
   return 100..times(function(i) {
     return level2.push({
       "class": "Gull",
@@ -11376,6 +11384,28 @@ Gull = function(I) {
 };
 
 Gull.animation = Sprite.loadSheet("gull", 256, 234);
+;
+var Tower;
+
+Tower = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    sprite: "tower",
+    y: App.height,
+    zIndex: 5,
+    scale: 0.1
+  });
+  self = GameObject(I);
+  I.x = 960;
+  I.y = App.height;
+  self.bind("update", function() {
+    I.scale += playerSpeed / 15000;
+    I.x -= playerSpeed / 150;
+    return I.y += playerSpeed / 100;
+  });
+  return self;
+};
 ;
 
 App.entities = {};
