@@ -109,52 +109,52 @@ MainGame.levelData =
 
   27.times (i) ->
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 900 + 1000 * i
       y: App.height / 2
 
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 1400 + 1000 * i
       y: App.height / 4
 
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 2100 + 1300 * i
       y: 3 * App.height / 4
 
   8.times (i) ->
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 1000 + 500 * i
       y: 100 + i * 50
 
   10.times (i) ->
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 5000 + 250 * i
       y: 50 + App.height/2 * i / 13
 
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 5000 + 250 * i
       y: App.height - 50 - App.height/2 * i / 13
 
   50.times (i) ->
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 7500 + 100 * i
       y: App.height / 2 + Math.sin(i * Math.TAU / 20) * App.height / 2
 
   20.times (i) ->
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 12500 + 100 * i
       y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
 
   20.times (i) ->
     level1.push
-      class: "Enemy"
+      class: "Craw"
       x: 14500 + 50 * i
       y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
 
