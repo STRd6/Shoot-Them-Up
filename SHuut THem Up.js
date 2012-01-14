@@ -11072,6 +11072,26 @@ GhostShip = function(I) {
   return self;
 };
 ;
+var Gull;
+
+Gull = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    radius: 64
+  });
+  self = Enemy(I);
+  self.bind("update", function() {
+    I.sprite = Gull.animation.wrap((I.age / 6).floor());
+    I.x -= 4;
+    I.y += Math.cos(I.age * Math.TAU / 60) * 20;
+    return I.hflip = true;
+  });
+  return self;
+};
+
+Gull.animation = Sprite.loadSheet("gull", 256, 234);
+;
 var Jupiter;
 
 Jupiter = function(I) {
@@ -11114,7 +11134,7 @@ MainGame = function(I) {
     I.spawnEvents.sort(function(a, b) {
       return a.x - b.x;
     });
-    endDistance = 60000;
+    endDistance = level.objectiveDistance / (level.distanceScale || 1);
     window.distanceCovered = 0;
     window.playerSpeed = 0;
     spawnLine = 0;
@@ -11190,11 +11210,18 @@ MainGame.levelData = {
     objective: "The Tower",
     objectiveDistance: 60000,
     units: "meters"
+  },
+  3: {
+    background: "tower_bg",
+    parallax: 1,
+    objective: "The Bottom",
+    objectiveDistance: 10000,
+    units: "meters"
   }
 };
 
 (function() {
-  var level1, level2;
+  var level1, level2, level3;
   level1 = MainGame.levelData[1].eventData = [];
   27..times(function(i) {
     level1.push({
@@ -11269,13 +11296,23 @@ MainGame.levelData = {
     y: App.height,
     x: 24000
   });
-  return 100..times(function(i) {
+  26..times(function(i) {
     return level2.push({
-      "class": "Gull",
-      x: i * 250,
-      y: rand(App.height)
+      "class": "Manta",
+      x: i * 1700 + 16000,
+      y: rand(App.height / 2) + App.height / 2
     });
   });
+  10..times(function(i) {
+    return 20..times(function(j) {
+      return level2.push({
+        "class": "Gull",
+        x: i * 5000 + j * 100 + 2000,
+        y: rand(App.height)
+      });
+    });
+  });
+  return level3 = MainGame.levelData[3].eventData = [];
 })();
 ;
 var Player;
@@ -11349,42 +11386,6 @@ Soundblast = function(I) {
 
 Soundblast.animation = Sprite.loadSheet("soundblast", 128, 95);
 ;
-
-Function.prototype.once = function() {
-  var fn, memo, ran;
-  fn = this;
-  ran = false;
-  memo = null;
-  return function() {
-    if (ran) {
-      return memo;
-    } else {
-      ran = true;
-      return memo = fn.apply(this, arguments);
-    }
-  };
-};
-;
-var Gull;
-
-Gull = function(I) {
-  var self;
-  if (I == null) I = {};
-  Object.reverseMerge(I, {
-    radius: 64
-  });
-  self = Enemy(I);
-  self.bind("update", function() {
-    I.sprite = Gull.animation.wrap((I.age / 6).floor());
-    I.x -= 4;
-    I.y += Math.cos(I.age * Math.TAU / 60) * 20;
-    return I.hflip = true;
-  });
-  return self;
-};
-
-Gull.animation = Sprite.loadSheet("gull", 256, 234);
-;
 var Tower;
 
 Tower = function(I) {
@@ -11406,6 +11407,43 @@ Tower = function(I) {
   });
   return self;
 };
+;
+
+Function.prototype.once = function() {
+  var fn, memo, ran;
+  fn = this;
+  ran = false;
+  memo = null;
+  return function() {
+    if (ran) {
+      return memo;
+    } else {
+      ran = true;
+      return memo = fn.apply(this, arguments);
+    }
+  };
+};
+;
+var Manta;
+
+Manta = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    radius: 128,
+    health: 5
+  });
+  self = Enemy(I);
+  self.bind("update", function() {
+    I.sprite = Manta.animation.wrap((I.age / 6).floor() % 2);
+    I.x -= 4;
+    I.y += Math.cos(I.age * Math.TAU / 60) * 10;
+    return I.hflip = true;
+  });
+  return self;
+};
+
+Manta.animation = Sprite.loadSheet("manta", 584, 456);
 ;
 
 App.entities = {};
