@@ -19,12 +19,7 @@ Craw = (I={}) ->
       Sound.play "bing"
 
   self.bind "destroy", ->
-    engine.add
-      sprite: "bubbles"
-      duration: 15
-      x: I.x
-      y: I.y
-      zIndex: 15
+    Sound.play "burst"
 
   # We must always return self as the last line
   return self
