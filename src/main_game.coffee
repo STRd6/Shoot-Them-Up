@@ -90,7 +90,7 @@ MainGame.levelData =
     parallax: 1/8
     objective: "Jupiter"
     objectiveDistance: 300000
-    distanceScale: 5
+    distanceScale: 6
   2:
     background: "clouds"
     parallax: 1/2
