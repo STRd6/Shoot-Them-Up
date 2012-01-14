@@ -17,13 +17,8 @@ Enemy = (I={}) ->
   self.bind "step", ->
     I.x -= playerSpeed
 
-    if I.health >= 2
-      I.sprite = Enemy.sprites.craw
-    else
-     I.sprite = Enemy.sprites.crawRed
-
-   if I.x < -400
-     I.active = false
+    if I.x < -400
+      I.active = false
 
   self.bind "hit", ->
     I.health -= 1
@@ -41,8 +36,4 @@ Enemy = (I={}) ->
 
   # We must always return self as the last line
   return self
-
-Enemy.sprites =
-  craw: Sprite.loadByName "craw"
-  crawRed: Sprite.loadByName "craw_red"
 
