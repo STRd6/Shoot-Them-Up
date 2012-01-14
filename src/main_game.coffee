@@ -18,7 +18,7 @@ MainGame = (I={}) ->
     I.spawnEvents.sort (a, b) ->
       a.x - b.x
 
-    endDistance = 60000
+    endDistance = level.objectiveDistance / (level.distanceScale || 1)
     window.distanceCovered = 0
     window.playerSpeed = 0
 
@@ -96,6 +96,12 @@ MainGame.levelData =
     parallax: 1/2
     objective: "The Tower"
     objectiveDistance: 60000
+    units: "meters"
+  3:
+    background: "tower_bg"
+    parallax: 1
+    objective: "The Bottom"
+    objectiveDistance: 10000
     units: "meters"
 
 (->
@@ -182,5 +188,7 @@ MainGame.levelData =
         class: "Gull"
         x: i * 5000 + j * 100 + 2000
         y: rand(App.height)
+
+  level3 = MainGame.levelData[3].eventData = []
 )()
 
