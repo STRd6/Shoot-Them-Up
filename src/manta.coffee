@@ -2,13 +2,14 @@ Manta = (I={}) ->
   # Set some default properties
   Object.reverseMerge I,
     radius: 128
+    health: 5
 
   # Inherit from game object
   self = Enemy(I)
 
   # Add events and methods here
   self.bind "update", ->
-    I.sprite = Manta.animation.wrap((I.age / 6).floor())
+    I.sprite = Manta.animation.wrap((I.age / 6).floor() % 2)
     I.x -= 4
 
     I.y += Math.cos(I.age * Math.TAU / 60) * 10
