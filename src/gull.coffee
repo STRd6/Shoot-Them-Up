@@ -16,6 +16,9 @@ Gull = (I={}) ->
 
     I.hflip = true
 
+  self.bind "destroy", ->
+    Sound.play "squak"
+
   # We must always return self as the last line
   return self
 
