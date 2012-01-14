@@ -2,6 +2,7 @@ Gull = (I={}) ->
   # Set some default properties
   Object.reverseMerge I,
     radius: 64
+    health: 1
 
   # Inherit from game object
   self = Enemy(I)
