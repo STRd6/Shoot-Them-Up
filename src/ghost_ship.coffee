@@ -6,7 +6,7 @@ GhostShip = (I={}) ->
     sprite: "ghost_ship"
     width: 32
     radius: 160
-    health: 60
+    health: 30
     velocity: Point(-2, 0)
     x: App.width + 320
     y: App.height / 2
