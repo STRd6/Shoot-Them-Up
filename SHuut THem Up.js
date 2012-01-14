@@ -10993,6 +10993,37 @@ Framerate = function(options) {
 ;
 ;
 ;
+var Craw;
+
+Craw = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    radius: 48,
+    sprite: "craw"
+  });
+  self = Enemy(I);
+  self.bind("step", function() {
+    if (I.health >= 2) {
+      return I.sprite = Craw.sprites.purp;
+    } else {
+      return I.sprite = Craw.sprites.red;
+    }
+  });
+  self.bind("hit", function() {
+    if (I.health === 1) return Sound.play("bing");
+  });
+  self.bind("destroy", function() {
+    return Sound.play("burst");
+  });
+  return self;
+};
+
+Craw.sprites = {
+  purp: Sprite.loadByName("craw"),
+  red: Sprite.loadByName("craw_red")
+};
+;
 var Enemy;
 
 Enemy = function(I) {
@@ -11011,13 +11042,8 @@ Enemy = function(I) {
   self = GameObject(I);
   self.bind("step", function() {
     I.x -= playerSpeed;
-    if (I.health >= 2) {
-      return I.sprite = Enemy.sprites.craw;
-    } else {
-      return I.sprite = Enemy.sprites.crawRed;
-    }
+    if (I.x < -400) return I.active = false;
   });
-  if (I.x < -400) I.active = false;
   self.bind("hit", function() {
     I.health -= 1;
     if (I.health <= 0) return self.destroy();
@@ -11033,11 +11059,6 @@ Enemy = function(I) {
   });
   return self;
 };
-
-Enemy.sprites = {
-  craw: Sprite.loadByName("craw"),
-  crawRed: Sprite.loadByName("craw_red")
-};
 ;
 var GhostShip;
 
@@ -11050,7 +11071,7 @@ GhostShip = function(I) {
     sprite: "ghost_ship",
     width: 32,
     radius: 160,
-    health: 60,
+    health: 30,
     velocity: Point(-2, 0),
     x: App.width + 320,
     y: App.height / 2
@@ -11078,7 +11099,8 @@ Gull = function(I) {
   var self;
   if (I == null) I = {};
   Object.reverseMerge(I, {
-    radius: 64
+    radius: 64,
+    health: 1
   });
   self = Enemy(I);
   self.bind("update", function() {
@@ -11086,6 +11108,9 @@ Gull = function(I) {
     I.x -= 4;
     I.y += Math.cos(I.age * Math.TAU / 60) * 20;
     return I.hflip = true;
+  });
+  self.bind("destroy", function() {
+    return Sound.play("squak");
   });
   return self;
 };
@@ -11202,7 +11227,7 @@ MainGame.levelData = {
     parallax: 1 / 8,
     objective: "Jupiter",
     objectiveDistance: 300000,
-    distanceScale: 5
+    distanceScale: 6
   },
   2: {
     background: "clouds",
@@ -11225,57 +11250,57 @@ MainGame.levelData = {
   level1 = MainGame.levelData[1].eventData = [];
   27..times(function(i) {
     level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 900 + 1000 * i,
       y: App.height / 2
     });
     level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 1400 + 1000 * i,
       y: App.height / 4
     });
     return level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 2100 + 1300 * i,
       y: 3 * App.height / 4
     });
   });
   8..times(function(i) {
     return level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 1000 + 500 * i,
       y: 100 + i * 50
     });
   });
   10..times(function(i) {
     level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 5000 + 250 * i,
       y: 50 + App.height / 2 * i / 13
     });
     return level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 5000 + 250 * i,
       y: App.height - 50 - App.height / 2 * i / 13
     });
   });
   50..times(function(i) {
     return level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 7500 + 100 * i,
       y: App.height / 2 + Math.sin(i * Math.TAU / 20) * App.height / 2
     });
   });
   20..times(function(i) {
     return level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 12500 + 100 * i,
       y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
     });
   });
   20..times(function(i) {
     return level1.push({
-      "class": "Enemy",
+      "class": "Craw",
       x: 14500 + 50 * i,
       y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
     });
@@ -11314,6 +11339,27 @@ MainGame.levelData = {
   });
   return level3 = MainGame.levelData[3].eventData = [];
 })();
+;
+var Manta;
+
+Manta = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    radius: 128,
+    health: 5
+  });
+  self = Enemy(I);
+  self.bind("update", function() {
+    I.sprite = Manta.animation.wrap((I.age / 6).floor() % 2);
+    I.x -= 4;
+    I.y += Math.cos(I.age * Math.TAU / 60) * 10;
+    return I.hflip = true;
+  });
+  return self;
+};
+
+Manta.animation = Sprite.loadSheet("manta", 584, 456);
 ;
 var Player;
 
@@ -11423,27 +11469,6 @@ Function.prototype.once = function() {
     }
   };
 };
-;
-var Manta;
-
-Manta = function(I) {
-  var self;
-  if (I == null) I = {};
-  Object.reverseMerge(I, {
-    radius: 128,
-    health: 5
-  });
-  self = Enemy(I);
-  self.bind("update", function() {
-    I.sprite = Manta.animation.wrap((I.age / 6).floor() % 2);
-    I.x -= 4;
-    I.y += Math.cos(I.age * Math.TAU / 60) * 10;
-    return I.hflip = true;
-  });
-  return self;
-};
-
-Manta.animation = Sprite.loadSheet("manta", 584, 456);
 ;
 
 App.entities = {};
