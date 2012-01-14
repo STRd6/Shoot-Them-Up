@@ -170,16 +170,17 @@ MainGame.levelData =
     y: App.height
     x: 24000
 
-  50.times (i) ->
+  26.times (i) ->
     level2.push
       class: "Manta"
-      x: i * 750 + 1500
+      x: i * 1700 + 16000
       y: rand(App.height / 2) + App.height/2
 
-  100.times (i) ->
-    level2.push
-      class: "Gull"
-      x: i * 250
-      y: rand(App.height)
+  10.times (i) ->
+    20.times (j) ->
+      level2.push
+        class: "Gull"
+        x: i * 5000 + j * 100 + 2000
+        y: rand(App.height)
 )()
 
