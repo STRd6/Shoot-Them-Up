@@ -11408,7 +11408,8 @@ Player = function(I) {
     width: 32,
     x: 250,
     y: App.height / 2,
-    zIndex: 8
+    zIndex: 8,
+    cooldown: 0
   });
   self = GameObject(I);
   self.bind("update", function() {
@@ -11419,14 +11420,19 @@ Player = function(I) {
     I.y += Math.sin(I.rotation) * amplitude;
     window.playerSpeed = Math.cos(I.rotation) * amplitude / 6;
     window.distanceCovered += window.playerSpeed;
-    if (I.age % 30 === 0) {
-      return engine.add({
-        "class": "Soundblast",
-        x: I.x,
-        y: I.y,
-        rotation: I.rotation
-      });
+    I.cooldown = I.cooldown.approach(0, 1);
+    if (mousePressed) {
+      if (!I.cooldown) {
+        engine.add({
+          "class": "Soundblast",
+          x: I.x,
+          y: I.y,
+          rotation: I.rotation
+        });
+      }
+      I.cooldown = 15;
     }
+    return window.mousePressed = false;
   });
   return self;
 };
@@ -11608,9 +11614,15 @@ canvas.font("bold 24px consolas, 'Courier New', 'andale mono', 'lucida console',
 
 window.mousePosition = Point(0, 0);
 
+window.mousePressed = false;
+
 $(document).mousemove(function(event) {
   mousePosition.x = event.pageX;
   return mousePosition.y = event.pageY;
+});
+
+$(document).mousedown(function(event) {
+  return window.mousePressed = true;
 });
 
 DEBUG_DRAW = false;
