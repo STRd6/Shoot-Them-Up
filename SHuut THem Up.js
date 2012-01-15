@@ -11607,6 +11607,7 @@ canvas = $("canvas").pixieCanvas();
 
 window.engine = Engine({
   backgroundColor: false,
+  clear: true,
   canvas: canvas
 });
 
