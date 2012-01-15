@@ -181,6 +181,17 @@ MainGame.levelData =
       x: 14500 + 50 * i
       y: App.height / 2 + Math.sin(i * Math.TAU / 10) * App.height / 2
 
+  13.times (i) ->
+    level1.push
+      class: "Craw"
+      x: 27000 + i * 900
+      y: App.height / 3
+
+    level1.push
+      class: "Craw"
+      x: 27000 + i * 900
+      y: 2 * App.height / 3
+
   level1.push
     class: "Jupiter"
     x: 800
