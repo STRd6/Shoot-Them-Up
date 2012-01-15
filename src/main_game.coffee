@@ -7,6 +7,7 @@ MainGame = (I={}) ->
   self = GameState(I)
 
   SPAWN_BUFFER = 400 + App.width
+  ended = false
 
   self.bind "enter", ->
     self.add
@@ -38,9 +39,12 @@ MainGame = (I={}) ->
       self.cameras().first().fadeOut()
 
       engine.delay 30, ->
-        engine.setState MainGame(
-          level: I.level + 1
-        )
+        if I.level == 4
+          ended = true
+        else
+          engine.setState MainGame(
+            level: I.level + 1
+          )
     ).once()
 
     self.bind 'update', ->
@@ -65,19 +69,26 @@ MainGame = (I={}) ->
       background.draw(canvas, backgroundOffset + background.width, 0)
 
     self.bind "overlay", (canvas) ->
-      message = "#{Math.max((level.objectiveDistance - (level.distanceScale || 1) * distanceCovered).floor(), 0)} #{level.units || "kilometers"} to #{level.objective}"
+      if ended
+        canvas.centerText
+          x: App.width / 2 
+          y: App.height / 2
+          text: "THE END"
+          color: "#FFF"
+      else
+        message = "#{Math.max((level.objectiveDistance - (level.distanceScale || 1) * distanceCovered).floor(), 0)} #{level.units || "kilometers"} to #{level.objective}"
 
-      canvas.centerText
-        x: 256
-        y: 50
-        text: message
-        color: "#000"
+        canvas.centerText
+          x: 256
+          y: 50
+          text: message
+          color: "#000"
 
-      canvas.centerText
-        x: 254
-        y: 48
-        text: message
-        color: "#FFF"
+        canvas.centerText
+          x: 254
+          y: 48
+          text: message
+          color: "#FFF"
 
     Music.play I.music
 
