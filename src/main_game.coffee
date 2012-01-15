@@ -199,5 +199,9 @@ MainGame.levelData =
   level3 = MainGame.levelData[3].eventData = []
 
   level4 = MainGame.levelData[4].eventData = []
+
+  level4.push
+    class: "Geod"
+    x: 0
 )()
 
