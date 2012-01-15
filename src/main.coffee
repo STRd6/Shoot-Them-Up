@@ -2,6 +2,7 @@ canvas = $("canvas").pixieCanvas()
 
 window.engine = Engine
   backgroundColor: false
+  clear: true
   canvas: canvas
 
 canvas.font("bold 24px consolas, 'Courier New', 'andale mono', 'lucida console', monospace")
