@@ -125,6 +125,12 @@ MainGame.levelData =
 (->
   level1 = MainGame.levelData[1].eventData = []
 
+  7.times (i) ->
+    30.times (j) ->
+      level1.push
+        class: "Comet"
+        x: i * 8000 + j * 50 + 4000
+
   27.times (i) ->
     level1.push
       class: "Craw"
