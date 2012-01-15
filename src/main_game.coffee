@@ -30,10 +30,9 @@ MainGame = (I={}) ->
     background = Sprite.loadByName(level.background)
 
     processSpawnEvent = (event) ->
-      engine.add
-        class: event.class
-        x: event.x - (spawnLine - SPAWN_BUFFER) # x is adjusted based on current spawn line
-        y: event.y
+      instanceData = Object.extend {}, event
+      instanceData.x = event.x - (spawnLine - SPAWN_BUFFER) # x is adjusted based on current spawn line
+      engine.add instanceData
 
     triggerEnd = (->
       self.cameras().first().fadeOut()
@@ -216,6 +215,13 @@ MainGame.levelData =
   level3 = MainGame.levelData[3].eventData = []
 
   level4 = MainGame.levelData[4].eventData = []
+
+  7.times (i) ->
+    level4.push
+      class: "Foreground"
+      sprite: "stalac"
+      x: 1000 + i * 1600
+      y: App.height/2
 
   level4.push
     class: "Geod"
