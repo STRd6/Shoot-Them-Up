@@ -11141,7 +11141,7 @@ Jupiter = function(I) {
 var MainGame;
 
 MainGame = function(I) {
-  var SPAWN_BUFFER, self;
+  var SPAWN_BUFFER, ended, self;
   if (I == null) I = {};
   Object.reverseMerge(I, {
     level: 1,
@@ -11149,6 +11149,7 @@ MainGame = function(I) {
   });
   self = GameState(I);
   SPAWN_BUFFER = 400 + App.width;
+  ended = false;
   self.bind("enter", function() {
     var background, backgroundOffset, endDistance, eventIndex, level, processSpawnEvent, spawnLine, triggerEnd;
     self.add({
@@ -11176,9 +11177,13 @@ MainGame = function(I) {
     triggerEnd = (function() {
       self.cameras().first().fadeOut();
       return engine.delay(30, function() {
-        return engine.setState(MainGame({
-          level: I.level + 1
-        }));
+        if (I.level === 4) {
+          return ended = true;
+        } else {
+          return engine.setState(MainGame({
+            level: I.level + 1
+          }));
+        }
       });
     }).once();
     self.bind('update', function() {
@@ -11202,19 +11207,28 @@ MainGame = function(I) {
     });
     self.bind("overlay", function(canvas) {
       var message;
-      message = "" + (Math.max((level.objectiveDistance - (level.distanceScale || 1) * distanceCovered).floor(), 0)) + " " + (level.units || "kilometers") + " to " + level.objective;
-      canvas.centerText({
-        x: 256,
-        y: 50,
-        text: message,
-        color: "#000"
-      });
-      return canvas.centerText({
-        x: 254,
-        y: 48,
-        text: message,
-        color: "#FFF"
-      });
+      if (ended) {
+        return canvas.centerText({
+          x: App.width / 2,
+          y: App.height / 2,
+          text: "THE END",
+          color: "#FFF"
+        });
+      } else {
+        message = "" + (Math.max((level.objectiveDistance - (level.distanceScale || 1) * distanceCovered).floor(), 0)) + " " + (level.units || "kilometers") + " to " + level.objective;
+        canvas.centerText({
+          x: 256,
+          y: 50,
+          text: message,
+          color: "#000"
+        });
+        return canvas.centerText({
+          x: 254,
+          y: 48,
+          text: message,
+          color: "#FFF"
+        });
+      }
     });
     return Music.play(I.music);
   });
@@ -11242,12 +11256,28 @@ MainGame.levelData = {
     objective: "The Bottom",
     objectiveDistance: 10000,
     units: "meters"
+  },
+  4: {
+    background: "the_core",
+    parallax: 1 / 4,
+    objective: "a new beginning",
+    objectiveDistance: 13.5,
+    units: "days",
+    distanceScale: 1 / 1000
   }
 };
 
 (function() {
-  var level1, level2, level3;
+  var level1, level2, level3, level4;
   level1 = MainGame.levelData[1].eventData = [];
+  7..times(function(i) {
+    return 30..times(function(j) {
+      return level1.push({
+        "class": "Comet",
+        x: i * 8000 + j * 50 + 4000
+      });
+    });
+  });
   27..times(function(i) {
     level1.push({
       "class": "Craw",
@@ -11337,7 +11367,12 @@ MainGame.levelData = {
       });
     });
   });
-  return level3 = MainGame.levelData[3].eventData = [];
+  level3 = MainGame.levelData[3].eventData = [];
+  level4 = MainGame.levelData[4].eventData = [];
+  return level4.push({
+    "class": "Geod",
+    x: 0
+  });
 })();
 ;
 var Manta;
@@ -11470,6 +11505,93 @@ Function.prototype.once = function() {
   };
 };
 ;
+var Geod;
+
+Geod = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    height: 32,
+    sprite: "geod",
+    width: 32,
+    radius: 160,
+    health: 13,
+    rotation: 0
+  });
+  self = Enemy(I);
+  I.x = App.width + 320;
+  I.y = App.height / 2;
+  self.unbind("step");
+  self.bind("step", function() {
+    var targetX, targetY;
+    targetX = Math.cos(Math.TAU / 720 * I.age) * 128 + App.width * 3 / 4;
+    I.x = I.x.approach(targetX, 2);
+    targetY = Math.sin(Math.TAU / 450 * I.age) * 96 + App.height / 2;
+    I.y = I.y.approach(targetY, 5);
+    I.rotation += (1 / 960).rotations;
+    return I.scale = 0.9 + Math.sin(Math.TAU / 450 * I.age) * 0.1;
+  });
+  self.unbind("destroy");
+  self.bind("destroy", function() {
+    return engine.add({
+      "class": "Earth",
+      x: I.x,
+      y: I.y
+    });
+  });
+  self.bind("hit", function() {
+    engine.flash();
+    return Sound.play("boss_hit");
+  });
+  return self;
+};
+;
+var Earth;
+
+Earth = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    color: "blue",
+    sprite: "earth",
+    scale: 0.5
+  });
+  self = GameObject(I);
+  self.bind("update", function() {
+    I.scale *= 1 + playerSpeed / 15000;
+    return I.x -= playerSpeed / 200;
+  });
+  return self;
+};
+;
+var Comet;
+
+Comet = function(I) {
+  var self, speed;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    color: "blue",
+    height: 32,
+    width: 32,
+    rotation: 6 * Math.TAU / 16,
+    scale: rand() / 5 + 0.1
+  });
+  speed = I.scale * I.scale * 150;
+  I.velocity = Point.fromAngle(I.rotation).scale(speed);
+  I.x = rand(2 * App.width / 3) + App.width / 3;
+  I.y = -50;
+  self = GameObject(I);
+  self.bind("update", function() {
+    I.x += I.velocity.x - playerSpeed / 8;
+    I.y += I.velocity.y;
+    if (I.y > App.height + 256) I.active = false;
+    return I.sprite = Comet.sprites.wrap((I.age / 6).floor());
+  });
+  return self;
+};
+
+Comet.sprites = Sprite.loadSheet("comet", 408, 144);
+;
 
 App.entities = {};
 ;
@@ -11509,8 +11631,7 @@ engine.bind("draw", function(canvas) {
 });
 
 engine.setState(MainGame({
-  level: 1,
-  background: "clouds"
+  level: 1
 }));
 
 engine.start();
