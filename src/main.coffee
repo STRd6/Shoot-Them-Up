@@ -25,7 +25,6 @@ engine.bind "draw", (canvas) ->
 
 engine.setState MainGame(
   level: 1
-  background: "clouds"
 )
 
 engine.start()
