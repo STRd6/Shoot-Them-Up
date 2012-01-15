@@ -8,6 +8,7 @@ Player = (I={}) ->
     x: 250
     y: App.height / 2
     zIndex: 8
+    cooldown: 0
 
   # Inherit from game object
   self = GameObject(I)
@@ -24,12 +25,20 @@ Player = (I={}) ->
     window.playerSpeed = Math.cos(I.rotation) * amplitude / 6
     window.distanceCovered += window.playerSpeed
 
-    if I.age % 30 == 0
-      engine.add
-        class: "Soundblast"
-        x: I.x
-        y: I.y
-        rotation: I.rotation
+    I.cooldown = I.cooldown.approach(0, 1)
+
+    if mousePressed
+      unless I.cooldown
+        engine.add
+          class: "Soundblast"
+          x: I.x
+          y: I.y
+          rotation: I.rotation
+
+      I.cooldown = 15
+
+    # Reset mouse
+    window.mousePressed = false
 
   # We must always return self as the last line
   return self
