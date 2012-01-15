@@ -7,10 +7,14 @@ window.engine = Engine
 canvas.font("bold 24px consolas, 'Courier New', 'andale mono', 'lucida console', monospace")
 
 window.mousePosition = Point(0, 0)
+window.mousePressed = false
 
 $(document).mousemove (event) ->
   mousePosition.x = event.pageX
   mousePosition.y = event.pageY
+
+$(document).mousedown (event) ->
+  window.mousePressed = true
 
 DEBUG_DRAW = false
 $(document).bind "keydown", "0", ->
