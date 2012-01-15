@@ -17,7 +17,7 @@ Geod = (I={}) ->
 
   self.bind "step", ->
     targetX = Math.cos(Math.TAU/720 * I.age) * 128 + App.width * 3 / 4
-    I.x = I.x.approach(targetX, 1)
+    I.x = I.x.approach(targetX, 2)
 
     targetY = Math.sin(Math.TAU/450 * I.age) * 96 + App.height / 2
     I.y = I.y.approach(targetY, 5)
