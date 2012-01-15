@@ -103,6 +103,13 @@ MainGame.levelData =
     objective: "The Bottom"
     objectiveDistance: 10000
     units: "meters"
+  4:
+    background: "the_core"
+    parallax: 1/4
+    objective: "a new beginning"
+    objectiveDistance: 13.5
+    units: "days"
+    distanceScale: 1/1000
 
 (->
   level1 = MainGame.levelData[1].eventData = []
@@ -190,5 +197,7 @@ MainGame.levelData =
         y: rand(App.height)
 
   level3 = MainGame.levelData[3].eventData = []
+
+  level4 = MainGame.levelData[4].eventData = []
 )()
 
