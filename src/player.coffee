@@ -35,7 +35,7 @@ Player = (I={}) ->
           y: I.y
           rotation: I.rotation
 
-      I.cooldown = 15
+        I.cooldown = 15
 
     # Reset mouse
     window.mousePressed = false
