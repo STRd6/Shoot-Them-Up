@@ -11538,8 +11538,8 @@ Player = function(I) {
           y: I.y,
           rotation: I.rotation
         });
+        I.cooldown = 15;
       }
-      I.cooldown = 15;
     }
     return window.mousePressed = false;
   });
