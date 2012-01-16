@@ -28,6 +28,7 @@ MainGame = (I={}) ->
 
     backgroundOffset = 0
     background = Sprite.loadByName(level.background)
+    backdrop = Sprite.loadByName(level.backdrop) if level.backdrop
 
     processSpawnEvent = (event) ->
       instanceData = Object.extend {}, event
@@ -62,6 +63,9 @@ MainGame = (I={}) ->
         triggerEnd()
 
     self.bind "beforeDraw", (canvas) ->
+      if level.backdrop
+        backdrop.draw(canvas, 0, 0)
+
       backgroundOffset += background.width if backgroundOffset < -background.width
 
       background.draw(canvas, backgroundOffset, 0)
@@ -102,6 +106,7 @@ MainGame.levelData =
     objectiveDistance: 300000
     distanceScale: 6
   2:
+    backdrop: "clouds2"
     background: "clouds"
     parallax: 1/2
     objective: "The Tower"
