@@ -11060,11 +11060,11 @@ Earth = function(I) {
   Object.reverseMerge(I, {
     color: "blue",
     sprite: "earth",
-    scale: 0.5
+    scale: 0.25
   });
   self = GameObject(I);
   self.bind("update", function() {
-    I.scale *= 1 + playerSpeed / 15000;
+    I.scale *= 1 + playerSpeed / 7000;
     return I.x -= playerSpeed / 200;
   });
   return self;
@@ -11102,6 +11102,24 @@ Enemy = function(I) {
       y: I.y,
       zIndex: 15
     });
+  });
+  return self;
+};
+;
+var Foreground;
+
+Foreground = function(I) {
+  var self;
+  if (I == null) I = {};
+  Object.reverseMerge(I, {
+    height: 32,
+    width: 32,
+    zIndex: 15
+  });
+  self = GameObject(I);
+  self.bind("update", function() {
+    I.x -= playerSpeed * 2;
+    if (I.x < -500) return I.active = false;
   });
   return self;
 };
@@ -11336,7 +11354,7 @@ MainGame.levelData = {
     background: "clouds",
     parallax: 1 / 2,
     objective: "The Tower",
-    objectiveDistance: 60000,
+    objectiveDistance: 50000,
     units: "meters"
   },
   3: {
@@ -11450,9 +11468,9 @@ MainGame.levelData = {
   level2.push({
     "class": "Tower",
     y: App.height,
-    x: 24000
+    x: 20000
   });
-  26..times(function(i) {
+  23..times(function(i) {
     return level2.push({
       "class": "Manta",
       x: i * 1700 + 16000,
@@ -11460,12 +11478,18 @@ MainGame.levelData = {
     });
   });
   10..times(function(i) {
-    return 20..times(function(j) {
+    20..times(function(j) {
       return level2.push({
         "class": "Gull",
         x: i * 5000 + j * 100 + 2000,
         y: rand(App.height)
       });
+    });
+    return level2.push({
+      "class": "Foreground",
+      x: -500 + i * 5000,
+      y: rand(App.height / 2) + App.height / 4,
+      sprite: "big_cloud"
     });
   });
   level3 = MainGame.levelData[3].eventData = [];
@@ -11618,24 +11642,6 @@ Function.prototype.once = function() {
       return memo = fn.apply(this, arguments);
     }
   };
-};
-;
-var Foreground;
-
-Foreground = function(I) {
-  var self;
-  if (I == null) I = {};
-  Object.reverseMerge(I, {
-    height: 32,
-    width: 32,
-    zIndex: 15
-  });
-  self = GameObject(I);
-  self.bind("update", function() {
-    I.x -= playerSpeed * 2;
-    if (I.x < -500) return I.active = false;
-  });
-  return self;
 };
 ;
 
