@@ -11238,7 +11238,7 @@ MainGame = function(I) {
   SPAWN_BUFFER = 400 + App.width;
   ended = false;
   self.bind("enter", function() {
-    var background, backgroundOffset, endDistance, eventIndex, level, processSpawnEvent, spawnLine, triggerEnd;
+    var backdrop, background, backgroundOffset, endDistance, eventIndex, level, processSpawnEvent, spawnLine, triggerEnd;
     self.add({
       "class": "Player"
     });
@@ -11254,6 +11254,7 @@ MainGame = function(I) {
     eventIndex = 0;
     backgroundOffset = 0;
     background = Sprite.loadByName(level.background);
+    if (level.backdrop) backdrop = Sprite.loadByName(level.backdrop);
     processSpawnEvent = function(event) {
       var instanceData;
       instanceData = Object.extend({}, event);
@@ -11285,6 +11286,7 @@ MainGame = function(I) {
       if (distanceCovered >= endDistance) return triggerEnd();
     });
     self.bind("beforeDraw", function(canvas) {
+      if (level.backdrop) backdrop.draw(canvas, 0, 0);
       if (backgroundOffset < -background.width) {
         backgroundOffset += background.width;
       }
@@ -11330,6 +11332,7 @@ MainGame.levelData = {
     distanceScale: 6
   },
   2: {
+    backdrop: "clouds2",
     background: "clouds",
     parallax: 1 / 2,
     objective: "The Tower",
