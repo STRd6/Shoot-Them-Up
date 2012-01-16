@@ -110,7 +110,7 @@ MainGame.levelData =
     background: "clouds"
     parallax: 1/2
     objective: "The Tower"
-    objectiveDistance: 60000
+    objectiveDistance: 50000
     units: "meters"
   3:
     background: "tower_bg"
@@ -213,9 +213,9 @@ MainGame.levelData =
   level2.push
     class: "Tower"
     y: App.height
-    x: 24000
+    x: 20000
 
-  26.times (i) ->
+  23.times (i) ->
     level2.push
       class: "Manta"
       x: i * 1700 + 16000
@@ -227,6 +227,12 @@ MainGame.levelData =
         class: "Gull"
         x: i * 5000 + j * 100 + 2000
         y: rand(App.height)
+
+    level2.push
+      class: "Foreground"
+      x: -500 + i * 5000
+      y: rand(App.height/2) + App.height/4
+      sprite: "big_cloud"
 
   level3 = MainGame.levelData[3].eventData = []
 
