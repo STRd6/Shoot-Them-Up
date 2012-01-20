@@ -11059,16 +11059,18 @@ Earth = function(I) {
   if (I == null) I = {};
   Object.reverseMerge(I, {
     color: "blue",
-    sprite: "earth",
     scale: 0.25
   });
   self = GameObject(I);
   self.bind("update", function() {
+    I.sprite = Earth.sprite;
     I.scale *= 1 + playerSpeed / 7000;
     return I.x -= playerSpeed / 200;
   });
   return self;
 };
+
+Earth.sprite = Sprite.loadByName("earth");
 ;
 var Enemy;
 
