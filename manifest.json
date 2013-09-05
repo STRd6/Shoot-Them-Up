@@ -1,15 +1,1 @@
-{
-  "name": "Space Dolphin: Episode IV",
-  "description": "You must return to Jupiter.",
-  "app": {
-    "launch": {
-      "local_path": "webstore/main.html"
-    }
-  },
-  "version": "0.0.1",
-  "icons": {
-    "128": "webstore/images/icon_128.png",
-    "96": "webstore/images/icon_96.png",
-    "16": "webstore/images/icon_16.png"
-  }
-}
+{"name":"Space Dolphin: Episode IV","description":"You must return to Jupiter.","app":{"launch":{"local_path":"webstore/main.html"}},"version":"0.0.2","icons":{"128":"webstore/images/icon_128.png","96":"webstore/images/icon_96.png","16":"webstore/images/icon_16.png"}}
